@@ -20,8 +20,9 @@ def test_name():
     item = Item("", 0, 0)
     item.name = "Смартфон"
     assert item.name == "Смартфон"
-    with pytest.raises(Exception):
-        item.name = "СуперСмартфон"
+
+    item.name = "СуперСмартфон"
+    assert item.name == "СуперСмарт"
 
 
 def test_instantiate_from_csv():
