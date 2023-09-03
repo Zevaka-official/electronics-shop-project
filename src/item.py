@@ -21,6 +21,15 @@ class Item:
         self.quantity = quantity
         Item.all.append(self)
 
+    def __repr__(self):
+        return f"Item('{self.__name}', {self.price}, {self.quantity})"
+
+
+    def __str__(self):
+        return self.__name
+
+
+
     @property
     def name(self):
         return self.__name
