@@ -22,21 +22,27 @@ class Item:
         Item.all.append(self)
 
     def __repr__(self):
-        return f"Item('{self.__name}', {self.price}, {self.quantity})"
+        return f"Item('{self._name}', {self.price}, {self.quantity})"
 
     def __str__(self):
-        return self.__name
+        return self._name
+
+    def __add__(self, other):
+        if issubclass(other.__class__, Item):
+            return self.quantity + other.quantity
+        else:
+            raise TypeError("Нельзя сложить не экземпляры класса Item")
 
     @property
     def name(self):
-        return self.__name
+        return self._name
 
     @name.setter
     def name(self, value):
         if len(value) > 10:
-            self.__name = value[:10]
+            self._name = value[:10]
         else:
-            self.__name = value
+            self._name = value
 
     @classmethod
     def instantiate_from_csv(cls, filename, delimiter=","):
