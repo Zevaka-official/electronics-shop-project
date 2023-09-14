@@ -5,10 +5,12 @@ class Item:
     """
     Класс для представления товара в магазине.
     """
+
     pay_rate = 1.0
     all = []
+    max_name_len = 20
 
-    def __init__(self, name: str, price: float, quantity: int) -> None:
+    def __init__(self, name: str, price: float, quantity: int, **kwargs) -> None:
         """
         Создание экземпляра класса item.
 
@@ -16,6 +18,8 @@ class Item:
         :param price: Цена за единицу товара.
         :param quantity: Количество товара в магазине.
         """
+        super().__init__(**kwargs)
+        self._name = name
         self.name = name
         self.price = price
         self.quantity = quantity
@@ -39,10 +43,8 @@ class Item:
 
     @name.setter
     def name(self, value):
-        if len(value) > 10:
-            self._name = value[:10]
-        else:
-            self._name = value
+        if len(value) > self.max_name_len:
+            raise Exception(f'Длина наименования товара превышает {self.max_name_len} символов')
 
     @classmethod
     def instantiate_from_csv(cls, filename, delimiter=","):
