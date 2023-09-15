@@ -1,16 +1,16 @@
-"""Р—РґРµСЃСЊ РЅР°РґРѕ РЅР°РїРёСЃР°С‚СЊ С‚РµСЃС‚С‹ СЃ РёСЃРїРѕР»СЊР·РѕРІР°РЅРёРµРј pytest РґР»СЏ РјРѕРґСѓР»СЏ item."""
+"""Здесь надо написать тесты с использованием pytest для модуля item."""
 import pytest
 
-from src.item import Item
+from src.item import Item, InstantiateCSVError
 
 
 def test_calculate_total_price():
-    item = Item("РЎРјР°СЂС‚С„РѕРЅ", 10000, 20)
+    item = Item("Смартфон", 10000, 20)
     assert item.calculate_total_price() == 200000
 
 
 def test_apply_discount():
-    item = Item("РЎРјР°СЂС‚С„РѕРЅ", 10000, 20)
+    item = Item("Смартфон", 10000, 20)
     Item.discount = 0.8
     item.apply_discount()
     assert item.price == 10000.0
@@ -18,11 +18,11 @@ def test_apply_discount():
 
 def test_name():
     item = Item("", 0, 0)
-    item.name = "РЎРјР°СЂС‚С„РѕРЅ"
-    assert item.name == "РЎРјР°СЂС‚С„РѕРЅ"
+    item.name = "Смартфон"
+    assert item.name == "Смартфон"
 
-    item.name = "РЎСѓРїРµСЂРЎРјР°СЂС‚С„РѕРЅ"
-    assert item.name == "РЎСѓРїРµСЂРЎРјР°СЂС‚"
+    item.name = "СуперСмартфон"
+    assert item.name == "СуперСмарт"
 
 
 def test_instantiate_from_csv():
@@ -38,18 +38,28 @@ def test_string_to_number():
 
 
 def test_repr():
-    item1 = Item('РЎРјР°СЂС‚С„РѕРЅ', 10000, 20)
-    assert repr(item1) == "Item('РЎРјР°СЂС‚С„РѕРЅ', 10000, 20)"
+    item1 = Item('Смартфон', 10000, 20)
+    assert repr(item1) == "Item('Смартфон', 10000, 20)"
 
 
 def test_str():
-    item1 = Item('РЎРјР°СЂС‚С„РѕРЅ', 0, 0)
-    assert str(item1) == 'РЎРјР°СЂС‚С„РѕРЅ'
+    item1 = Item('Смартфон', 0, 0)
+    assert str(item1) == 'Смартфон'
 
 
 def test_add():
-    item1 = Item('РЎРјР°СЂС‚С„РѕРЅ', 10000, 20)
-    item2 = Item('РЎРјР°СЂС‚С„РѕРЅ', 10000, 20)
+    item1 = Item('Смартфон', 10000, 20)
+    item2 = Item('Смартфон', 10000, 20)
     assert item1 + item2 == 40
     with pytest.raises(TypeError):
-        item1 + 'РЎРјР°СЂС‚С„РѕРЅ'
+        item1 + 'Смартфон'
+
+
+def test_instantiate_csv_file_not_found():
+    with pytest.raises(FileNotFoundError):
+        Item.instantiate_from_csv('src/items.csv')
+
+
+def test_instantiate_csv_file_error():
+    with pytest.raises(InstantiateCSVError):
+        Item.instantiate_from_csv('src/items.csv1')

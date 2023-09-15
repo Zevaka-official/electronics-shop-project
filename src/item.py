@@ -1,11 +1,17 @@
-from csv import DictReader
+import csv
+import os
+from pathlib import Path
+
+
+class InstantiateCSVError(Exception):
+    pass
 
 
 class Item:
     """
     Класс для представления товара в магазине.
     """
-
+    CSV_PATH = os.path.join(os.path.dirname(__file__), "items.csv")
     pay_rate = 1.0
     all = []
     max_name_len = 20
@@ -47,12 +53,19 @@ class Item:
             raise Exception(f'Длина наименования товара превышает {self.max_name_len} символов')
 
     @classmethod
-    def instantiate_from_csv(cls, filename, delimiter=","):
-        cls.all.clear()
-        with open(filename, encoding="windows-1251") as f:
-            reader = DictReader(f, delimiter=delimiter)
-            for row in reader:
-                cls(row["name"], float(row["price"]), cls.string_to_number(row["quantity"]))
+    def instantiate_from_csv(cls):
+        """класс-метод, инициализирующий экземпляры класса Item данными из файла src/items.csv"""
+
+        if not os.path.exists(cls.CSV_PATH):
+            raise FileNotFoundError("Отсутствует файл item.csv")
+        try:
+            with open(cls.CSV_PATH, encoding='cp1251') as file:
+                reader = csv.DictReader(file)
+                cls.all.clear()
+                for line in reader:
+                    item = cls(line['name'], float(line['price']), int(line['quantity']))
+        except (KeyError, TypeError):
+            raise InstantiateCSVError("Файл item.csv поврежден")
 
     @staticmethod
     def string_to_number(string):
@@ -60,14 +73,15 @@ class Item:
 
     def calculate_total_price(self) -> float:
         """
-        Рассчитывает общую стоимость конкретного товара в магазине.
+     Рассчитывает общую стоимость конкретного товара в магазине.
+     :return: Общая стоимость товара.
+     """
 
-        :return: Общая стоимость товара.
-        """
         return self.price * self.quantity
 
     def apply_discount(self) -> None:
         """
         Применяет установленную скидку для конкретного товара.
         """
+
         self.price *= Item.pay_rate
